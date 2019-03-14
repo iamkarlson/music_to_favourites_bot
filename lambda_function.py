@@ -26,8 +26,8 @@ def lambda_handler(event, context):
             reply = "Added!"
             send_message(reply, chat_id)
 
-    except AttributeError:
-        otherStuff()
+    except:
+        pass
     
     # TODO implement
     return {
