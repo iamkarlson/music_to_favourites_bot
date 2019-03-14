@@ -18,17 +18,32 @@ def lambda_handler(event, context):
     body = json.loads(event_body)
     print(body)
     try:
-        chat_id = body['message']['chat']['id']
-        text = body['message']['text']
+        body_message = body['message']
+    except:
+        try:
+            print("edited message")
+            body_message = body['edited_message']
+        except:
+            print("wrong message type")
+            return
+    try:
+        whom = "%s %s"%(body_message['from']['first_name'],body_message['from']['last_name'])
+    except:
+        whom = "@%s"%(body_message['from']['username'])
+    
+    try:
+        chat_id = body_message['chat']['id']
+        print("chat_id %s"%chat_id)
+        text = body_message['text']
+        print("message text: %s"%text)
         if "spotify.com" in text or "youtube.com" in text:
             what = (re.search("(?P<url>https?://[^\s]+)", text).group("url"))
             message_date = datetime.datetime.now()
-            whom = "%s %s"%(body['message']['from']['first_name'],body['message']['from']['last_name'])
+            
             description = get_description(what)
             ifttt_alert(what, whom, description)
             reply = "Added!"
             send_message(reply, chat_id)
-
     except:
         pass
     
@@ -57,4 +72,4 @@ def ifttt_alert(what, whom, description):
     row_data["value1"] = what
     row_data["value2"] = whom
     row_data["value3"] = description
-    requests.post("https://maker.ifttt.com/trigger/{}/with/key/{}".format(IFTTT_EVENT_NAME,IFTTT_TOKEN), data=row_data)    
+    requests.post("https://maker.ifttt.com/trigger/{}/with/key/{}".format(IFTTT_EVENT_NAME,IFTTT_TOKEN), data=row_data)
