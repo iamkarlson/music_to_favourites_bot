@@ -17,8 +17,8 @@ def lambda_handler(event, context):
     event_body = event['body']
     body = json.loads(event_body)
     print(body)
-    chat_id = body['message']['chat']['id']
     try:
+        chat_id = body['message']['chat']['id']
         text = body['message']['text']
         if "spotify.com" in text or "youtube.com" in text:
             what = (re.search("(?P<url>https?://[^\s]+)", text).group("url"))
@@ -57,4 +57,4 @@ def ifttt_alert(what, whom, description):
     row_data["value1"] = what
     row_data["value2"] = whom
     row_data["value3"] = description
-    requests.post("https://maker.ifttt.com/trigger/{}/with/key/{}".format(IFTTT_EVENT_NAME,IFTTT_TOKEN), data=row_data)
+    requests.post("https://maker.ifttt.com/trigger/{}/with/key/{}".format(IFTTT_EVENT_NAME,IFTTT_TOKEN), data=row_data)    
